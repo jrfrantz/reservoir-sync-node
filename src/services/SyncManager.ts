@@ -7,6 +7,7 @@ import {
   isValidDate,
 } from '../utils';
 import { SyncWorker } from './SyncWorker';
+import { endOfMonth } from 'date-fns';
 
 export class SyncManager {
   /**
@@ -39,6 +40,7 @@ export class SyncManager {
    * @type {String}
    */
   public date: string;
+  public timestamp: number;
 
   /**
    * # isBackfilled
@@ -97,6 +99,7 @@ export class SyncManager {
     this.insertCount = 0;
     this.requestCount = 0;
     this.date = config.date;
+    this.timestamp = new Date(config.date).getTime();
     this.workers = new Map();
     this.isBackfilled = false;
     this.status = 'backfilling';
@@ -113,13 +116,15 @@ export class SyncManager {
    * @returns void
    */
   public async launch(): Promise<string> {
+    const startDateOffset =
+      new Date(this.timestamp).getTimezoneOffset() * 60 * 1000;
     return new Promise(async (resolve) => {
       while (true) {
         /**
          * Set the data parameters for the initial request
          */
         this.date = this.config.date;
-        const yearMonth = this.config.date.substring(0, 7);
+        this.timestamp = new Date(this.config.date).getTime();
 
         /**
          * Set the isBusy flag to true to indicate
@@ -132,8 +137,11 @@ export class SyncManager {
          * If we are able to get all the data back in a single request
          * then we can skip the month
          */
+        const endDate = endOfMonth(this.timestamp + startDateOffset);
         const res = await this.config.request({
-          date: yearMonth,
+          startTimestamp: this.timestamp,
+          endTimestamp:
+            endDate.getTime() - endDate.getTimezoneOffset() * 60 * 1000,
           continuation: '',
         });
 
@@ -164,6 +172,7 @@ export class SyncManager {
         if (data.length === 1000 && res.data.continuation) {
           const lastSet = data[data.length - 1]; // Get the last set in the dataset
           this.date = lastSet.updatedAt.substring(0, 10); // Parse the last date and set it to the working date
+          this.timestamp = new Date(this.date).getTime();
           await this._handleSyncing(); // Handle the syncing
         }
 
@@ -200,6 +209,7 @@ export class SyncManager {
           ...this.config,
           id,
           date: worker.date,
+          timestamp: worker.timestamp,
           review: this._reviewWorker.bind(this),
           continuation: worker.continuation,
         })
@@ -214,11 +224,19 @@ export class SyncManager {
    * @returns void
    */
   private _createWorkers(): void {
+    //generate time ranges based on worker count
+
     for (let i = 0; i < Number(this.config.workerCount || 1); i++) {
       if (i !== 0) {
-        const date = incrementDate(this.date, { days: 1 });
+        const startDateOffset =
+          new Date(this.timestamp).getTimezoneOffset() * 60 * 1000;
+        const { date, timestamp } = incrementDate(
+          this.timestamp + startDateOffset,
+          { hours: 4 }
+        );
         if (!isSameMonth(date, this.date) || !isValidDate(date)) return;
         this.date = date;
+        this.timestamp = timestamp;
       }
       const id = `worker-${uuid()}`;
       this.workers.set(
@@ -227,6 +245,7 @@ export class SyncManager {
           ...this.config,
           id,
           date: this.date,
+          timestamp: this.timestamp,
           review: this._reviewWorker.bind(this),
           continuation: '',
         })
@@ -240,7 +259,7 @@ export class SyncManager {
    * @access private
    * @returns {void} - void
    */
-  private _reviewWorker(worker: SyncWorker): Boolean {
+  private _reviewWorker(worker: SyncWorker): boolean {
     const _reqs = worker.counts.requests;
 
     this.requestCount += _reqs['2xx'] += _reqs['4xx'] += _reqs['5xx'];
@@ -265,11 +284,18 @@ export class SyncManager {
    * @access private
    * @returns void
    */
-  private _continueWork(worker: SyncWorker): Boolean {
-    const _date = incrementDate(this.date, { days: 1 });
-    if (isSameMonth(_date, this.date) && isValidDate(_date)) {
-      this.date = incrementDate(this.date, { days: 1 });
+  private _continueWork(worker: SyncWorker): boolean {
+    const startDateOffset =
+      new Date(this.timestamp).getTimezoneOffset() * 60 * 1000;
+    const { date, timestamp } = incrementDate(
+      this.timestamp + startDateOffset,
+      { hours: 4 }
+    );
+    if (isSameMonth(date, this.date) && isValidDate(date)) {
+      this.date = date;
+      this.timestamp = timestamp;
       worker.date = this.date;
+      worker.timestamp = this.timestamp;
       return true;
     } else {
       this._deleteWorker(worker.id);

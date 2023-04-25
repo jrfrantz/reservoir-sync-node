@@ -1,7 +1,5 @@
 import {
   add,
-  addDays,
-  endOfMonth,
   format,
   isEqual,
   isPast,
@@ -39,7 +37,8 @@ export const delay = (seconds: number): Promise<void> =>
 export const createQuery = (
   continuation: string = '',
   contracts: string[] = [],
-  date?: string
+  startTimestamp?: number,
+  endTimestamp?: number
 ) => {
   const queries: string[] = [
     'orderBy=updated_at',
@@ -48,26 +47,37 @@ export const createQuery = (
     'limit=1000',
   ];
 
-  if (date) {
-    let startTimestamp = 0;
-    let endTimestamp = 0;
-    const datePieces = date.split('-');
-    const year = parseInt(datePieces[0]);
-    const month = parseInt(datePieces[1]);
+  if (startTimestamp && endTimestamp) {
+    // let endTimestamp = timestamp;
+    // switch (period) {
+    //   case 'hour': {
+    //     endTimestamp = incrementDate(timestamp, { hours: 1 }).timestamp;
+    //     break;
+    //   }
+    //   case 'month': {
+    //     endTimestamp = incrementDate(timestamp, { months: 1 }).timestamp;
+    //     break;
+    //   }
+    // }
+    // let startTimestamp = 0;
+    // let endTimestamp = 0;
+    // const datePieces = date.split('-');
+    // const year = parseInt(datePieces[0]);
+    // const month = parseInt(datePieces[1]);
 
-    if (datePieces[2]) {
-      const day = parseInt(datePieces[2]);
-      const startDate = new Date(`${year}-${month}-${day}`);
-      const endDate = addDays(startDate.getTime(), 1);
-      const timezoneOffset = startDate.getTimezoneOffset() * 60 * 1000;
-      startTimestamp = startDate.getTime() - timezoneOffset;
-      endTimestamp = endDate.getTime() - timezoneOffset;
-    } else {
-      const startDate = new Date(`${year}-${month}-01`);
-      const timezoneOffset = startDate.getTimezoneOffset() * 60 * 1000;
-      startTimestamp = startDate.getTime() - timezoneOffset;
-      endTimestamp = endOfMonth(startDate).getTime() - timezoneOffset;
-    }
+    // if (datePieces[2]) {
+    //   const day = parseInt(datePieces[2]);
+    //   const startDate = new Date(`${year}-${month}-${day}`);
+    //   const endDate = addDays(startDate.getTime(), 1);
+    //   const timezoneOffset = startDate.getTimezoneOffset() * 60 * 1000;
+    //   startTimestamp = startDate.getTime() - timezoneOffset;
+    //   endTimestamp = endDate.getTime() - timezoneOffset;
+    // } else {
+    //   const startDate = new Date(`${year}-${month}-01`);
+    //   const timezoneOffset = startDate.getTimezoneOffset() * 60 * 1000;
+    //   startTimestamp = startDate.getTime() - timezoneOffset;
+    //   endTimestamp = endOfMonth(startDate).getTime() - timezoneOffset;
+    // }
 
     queries.push(`startTimestamp=${Math.floor(startTimestamp / 1000)}`);
     queries.push(`endTimestamp=${Math.floor(endTimestamp / 1000)}`);
@@ -105,10 +115,26 @@ export const isSuccessResponse = (
  * @returns - The incremented date as a string in 'yyyy-MM-dd' format.
  */
 export const incrementDate = (
-  date: string,
-  { days = 0, months = 0 }: { days?: number; months?: number }
-): string => {
-  return format(add(parseISO(date), { days, months }), 'yyyy-MM-dd');
+  date: number | string,
+  {
+    days = 0,
+    months = 0,
+    hours = 0,
+  }: { days?: number; months?: number; hours?: number }
+): { date: string; timestamp: number } => {
+  const newDate = add(typeof date === 'number' ? date : parseISO(date), {
+    days,
+    months,
+    hours,
+  });
+  const timezoneOffset = newDate.getTimezoneOffset() * 60 * 1000;
+
+  const formattedDate = format(newDate, 'yyyy-MM-dd');
+
+  return {
+    date: formattedDate,
+    timestamp: newDate.getTime() - timezoneOffset,
+  };
 };
 
 /**

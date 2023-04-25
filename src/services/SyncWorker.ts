@@ -1,6 +1,6 @@
 import { isToday as _isToday } from 'date-fns';
 import { Counts, IndexSignatureType, Status, WorkerConfig } from '../types';
-import { isSuccessResponse } from '../utils';
+import { incrementDate, isSuccessResponse } from '../utils';
 
 export class SyncWorker {
   /**
@@ -80,6 +80,8 @@ export class SyncWorker {
    */
   public date: string;
 
+  public timestamp: number;
+
   /**
    * # _recentId
    * The recent identifier of the last record in the previous results
@@ -96,6 +98,7 @@ export class SyncWorker {
     this.isBusy = false;
     this.config = config;
     this.date = config.date;
+    this.timestamp = config.timestamp;
     this.isBackfilled = false;
     this.status = 'backfilling';
     this.continuation = config.continuation;
@@ -109,13 +112,23 @@ export class SyncWorker {
     this.isBusy = true;
 
     return new Promise<string>(async (resolve): Promise<void> => {
+      const startTimezoneOffset =
+        new Date(this.timestamp).getTimezoneOffset() * 60 * 1000;
+
       while (true) {
         /**
          * Fetch the data using the pagination token and the date
          */
+        const endTimestamp = incrementDate(
+          this.timestamp + startTimezoneOffset,
+          {
+            hours: 1,
+          }
+        ).timestamp;
         const res = await this.config.request({
           continuation: this.continuation,
-          date: this.date,
+          startTimestamp: this.timestamp,
+          endTimestamp: endTimestamp,
         });
 
         /**

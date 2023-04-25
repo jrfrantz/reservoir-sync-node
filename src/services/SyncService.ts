@@ -14,14 +14,14 @@ import {
   RequestMethods,
   SalesSchema,
   Schemas,
-  SyncerConfig
+  SyncerConfig,
 } from '../types';
 import {
   addressToBuffer,
   createQuery,
   incrementDate,
   isValidDate,
-  toBuffer
+  toBuffer,
 } from '../utils';
 import { BackupService } from './BackupService';
 import { InsertionService } from './InsertionService';
@@ -216,7 +216,9 @@ export class SyncService {
   private _createManagers(): void {
     for (let i = 0; i < Number(this.config.managerCount || 1); i++) {
       if (i !== 0) {
-        const date = incrementDate(this._date, { months: 1 });
+        const { date } = incrementDate(`${this._date.substring(0, 7)}-01`, {
+          months: 1,
+        });
         if (!isValidDate(date)) return;
         this._date = date;
       }
@@ -282,9 +284,11 @@ export class SyncService {
         managers: Array.from(this.managers.values()).map((manager) => {
           return {
             date: manager.date as string,
+            timestamp: manager.timestamp,
             workers: Array.from(manager.workers.values()).map((worker) => {
               return {
                 date: worker.date,
+                timestamp: worker.timestamp,
                 continuation: worker.continuation,
               };
             }),
@@ -305,7 +309,7 @@ export class SyncService {
 
     this.managers.delete(id);
   }
-  private _reviewManager(manager: SyncManager): Boolean {
+  private _reviewManager(manager: SyncManager): boolean {
     /**
      * If the manager has a worker that hit's a cursor - it is reported as backfilled and becomes our primary manager
      * This then means that all the other managers just need to finish what they are working on and will be queued for deletion once they are done
@@ -330,7 +334,9 @@ export class SyncService {
    * @returns void
    */
   private _continueWork(manager: SyncManager): boolean {
-    const _date = incrementDate(this._date, { months: 1 });
+    const { date: _date } = incrementDate(`${this._date.substring(0, 7)}-01`, {
+      months: 1,
+    });
 
     if (isValidDate(_date)) {
       this._date = _date;
@@ -399,11 +405,17 @@ export class SyncService {
    */
   private async _request({
     continuation,
-    date,
+    startTimestamp,
+    endTimestamp,
   }: Request): Promise<ApiResponse> {
     return await REQUEST_METHODS[this.config.type as keyof RequestMethods]({
       url: `${URL_BASES[this.config.chain]}${URL_PATHS[this.config.type]}`,
-      query: createQuery(continuation, this.config.contracts, date),
+      query: createQuery(
+        continuation,
+        this.config.contracts,
+        startTimestamp,
+        endTimestamp
+      ),
       apiKey: this._apiKey,
     });
   }
