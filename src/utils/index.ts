@@ -110,12 +110,12 @@ export const delay = async (ms: number): Promise<void> =>
  * @param hexValue - Hex value to slice
  * @returns Formatted buffer of a Hex
  */
-export const toBuffer = (hexValue: string = "") => {
+export const toBuffer = (hexValue = "") => {
   if (!hexValue) return null;
   return Buffer.from(hexValue || " ", "hex");
 };
 
-export const toString = (value: number = 0): string | null => {
+export const toString = (value = 0): string | null => {
   if (!value) return null;
   return value.toString();
 };
@@ -125,7 +125,7 @@ export const toString = (value: number = 0): string | null => {
  * @param hexValue - Hex value to slice
  * @returns Formatted buffer of a Hex
  */
-export const addressToBuffer = (hexValue: string = "") => {
+export const addressToBuffer = (hexValue = "") => {
   if (!hexValue) return null;
   return Buffer.from((hexValue || " ").slice(2), "hex");
 };

@@ -1,11 +1,11 @@
-import fs from 'fs';
+import fs from "fs";
 import {
   createLogger,
   format,
   Logger as WinstonLogger,
   transports,
-} from 'winston';
-import { LoggerServiceConfig } from '../types';
+} from "winston";
+import { LoggerServiceConfig } from "../types";
 
 /**
  * The _LoggerService class provides an interface to the logging framework.
@@ -19,20 +19,20 @@ class _LoggerService {
    * @type {WinstonLogger}
    */
   private _logger: WinstonLogger = createLogger({
-    level: 'info',
+    level: "info",
     exitOnError: false,
     format: format.combine(
       format.json(),
       format.colorize({ all: true }),
-      format.label({ label: 'SYNC-NODE' }),
-      format.timestamp({ format: 'HH:mm:ss:ms' }),
+      format.label({ label: "SYNC-NODE" }),
+      format.timestamp({ format: "HH:mm:ss:ms" }),
       format.printf(
         (info) => `[${info.label}] [${info.timestamp}] ${info.message}`
       )
     ),
     transports: [
       new transports.File({
-        filename: 'application.log',
+        filename: "application.log",
       }),
       new transports.Console(),
     ],
@@ -45,8 +45,8 @@ class _LoggerService {
    */
   private _config: LoggerServiceConfig = {
     datadog: {
-      apiKey: '',
-      appName: '',
+      apiKey: "",
+      appName: "",
     },
   };
 
@@ -65,7 +65,7 @@ class _LoggerService {
     ) {
       this._logger.transports.push(
         new transports.Http({
-          host: 'http-intake.logs.datadoghq.com',
+          host: "http-intake.logs.datadoghq.com",
           path: `/api/v2/logs?dd-api-key=<${this._config.datadog.apiKey}>&ddsource=nodejs&service=<${this._config.datadog.appName}>`,
           ssl: true,
         })
@@ -79,7 +79,7 @@ class _LoggerService {
    * @returns {WinstonLogger}
    */
   public info(message: unknown): WinstonLogger {
-    return this._logger.info(message + '\n');
+    return this._logger.info(message + "\n");
   }
 
   /**
@@ -88,7 +88,7 @@ class _LoggerService {
    * @returns {WinstonLogger}
    */
   public error(message: unknown): WinstonLogger {
-    return this._logger.error(message + '\n');
+    return this._logger.error(message + "\n");
   }
 
   /**
@@ -97,7 +97,7 @@ class _LoggerService {
    * @returns {WinstonLogger}
    */
   public warn(message: string): WinstonLogger {
-    return this._logger.warn(message + '\n');
+    return this._logger.warn(message + "\n");
   }
 
   /**
@@ -106,7 +106,7 @@ class _LoggerService {
    * @returns {WinstonLogger}
    */
   public debug(message: string): WinstonLogger {
-    return this._logger.debug(message + '\n');
+    return this._logger.debug(message + "\n");
   }
 
   /**

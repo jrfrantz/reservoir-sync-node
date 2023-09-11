@@ -1,6 +1,6 @@
-import 'dotenv/config';
-import { Server } from './Server';
-import { stdin, stdout } from 'node:process';
+import "dotenv/config";
+import { Server } from "./Server";
+import { stdin, stdout } from "node:process";
 
 stdin.pipe(stdout);
 

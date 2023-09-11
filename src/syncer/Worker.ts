@@ -20,7 +20,7 @@ interface WorkerData {
 type ControllerInstance = InstanceType<typeof Controller>;
 
 export class Worker extends EventEmitter {
-  public busy: boolean = false;
+  public busy = false;
 
   public data: WorkerData = {
     block: null,
@@ -31,7 +31,7 @@ export class Worker extends EventEmitter {
    * Continuation cursor to paginate through results
    * @access public
    */
-  public continuation: string = "";
+  public continuation = "";
 
   /**
    * Datatype of the worker
@@ -76,7 +76,7 @@ export class Worker extends EventEmitter {
 
   public async process(
     { startDate, id, endDate, contract, priority }: Block,
-    grain: boolean = true
+    grain = true
   ): Promise<void> {
     this.busy = true;
     this.data.block = { startDate, endDate, id, priority, contract };

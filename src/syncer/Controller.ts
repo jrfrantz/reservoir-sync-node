@@ -141,7 +141,7 @@ export class Controller {
     const blocks: Block[] = [];
     const chunks: string[][] = splitArray(this._config.contracts, 4);
 
-    let i: number = 0;
+    let i = 0;
     for await (const chunk of chunks) {
       const promises = await Promise.all(
         chunk.map(async (contract) => {

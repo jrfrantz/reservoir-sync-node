@@ -1,6 +1,6 @@
-import express, { Application, NextFunction, Request, Response } from 'express';
-import { createHandler } from 'graphql-http/lib/use/express';
-import { GraphQlService } from './services/GraphQlService';
+import express, { Application, NextFunction, Request, Response } from "express";
+import { createHandler } from "graphql-http/lib/use/express";
+import { GraphQlService } from "./services/GraphQlService";
 import {
   Backup,
   Block,
@@ -8,11 +8,11 @@ import {
   InsertionDataPoint,
   ProcessCommand,
   ServerConfig,
-} from '../types';
-import routes from './routes';
-import cors from 'cors';
-import { RedisClientType, createClient } from 'redis';
-import path from 'path';
+} from "../types";
+import routes from "./routes";
+import cors from "cors";
+import { RedisClientType, createClient } from "redis";
+import path from "path";
 
 /**
  * The _Server class encapsulates an Express application and provides methods for
@@ -37,7 +37,7 @@ class _Server {
    */
   private _config: ServerConfig = {
     port: 0,
-    authorization: '',
+    authorization: "",
   };
 
   private _insertionsOverTime: Record<
@@ -50,14 +50,14 @@ class _Server {
    * @returns {Promise<void>}
    */
   public async launch(): Promise<void> {
-    this._client.on('error', (err) =>
+    this._client.on("error", (err) =>
       // eslint-disable-next-line no-console
-      console.log('Servier: Failed to connect to redis', err)
+      console.log("Servier: Failed to connect to redis", err)
     );
-    process.on('message', (message: ProcessCommand) => {
+    process.on("message", (message: ProcessCommand) => {
       if (message.command && message.dataType) {
         switch (message.command) {
-          case 'record_insertions': {
+          case "record_insertions": {
             if (!this._insertionsOverTime[message.dataType]) {
               this._insertionsOverTime[message.dataType] = [];
             }
@@ -79,7 +79,7 @@ class _Server {
     return new Promise((resolve) => {
       this._app.listen(this._config.port, () => {
         // eslint-disable-next-line no-console
-        console.log('Server Service Launched');
+        console.log("Server Service Launched");
         resolve();
       });
     });
@@ -92,26 +92,26 @@ class _Server {
    */
   public construct(config: ServerConfig) {
     this._config = config;
-    this._app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
-    this._app.use(express.static(path.join(__dirname, '../viewer')));
+    this._app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+    this._app.use(express.static(path.join(__dirname, "../viewer")));
     const allowedRouteRegex =
       /^\/static\/(?:js|css)\/main\.\d+[a-zA-Z0-9]*\.(?:js|css)$|^\/viewer$/m;
 
-    this._app.use('*', (req: Request, res: Response, next: NextFunction) => {
+    this._app.use("*", (req: Request, res: Response, next: NextFunction) => {
       if (
-        req.method !== 'OPTIONS' &&
+        req.method !== "OPTIONS" &&
         !allowedRouteRegex.test(req.baseUrl) &&
-        req.get('Authorization') !== this._config.authorization
+        req.get("Authorization") !== this._config.authorization
       ) {
         res.status(403).json({
           error: {
             status: 403,
-            message: 'Unauthorized',
+            message: "Unauthorized",
           },
           data: null,
         });
       } else {
-        next('route');
+        next("route");
       }
     });
 
@@ -126,11 +126,11 @@ class _Server {
       );
     });
 
-    this._app.use('*', (req: Request, res: Response) => {
+    this._app.use("*", (req: Request, res: Response) => {
       res.status(404).json({
         error: {
           status: 404,
-          message: 'Route not found.',
+          message: "Route not found.",
         },
         data: null,
       });
@@ -172,7 +172,7 @@ class _Server {
   public async getBackups(): Promise<Record<string, Backup>> {
     try {
       const backups = Object.fromEntries(
-        Object.entries(await this._client.hGetAll('backups')).map(
+        Object.entries(await this._client.hGetAll("backups")).map(
           ([key, value]) => [key, JSON.parse(value) as Backup]
         )
       );

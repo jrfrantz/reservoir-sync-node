@@ -1,6 +1,6 @@
 /* eslint-disable no-unexpected-multiline */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 import {
   GraphQLBoolean,
   GraphQLFloat,
@@ -9,7 +9,7 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
   GraphQLString,
-} from 'graphql';
+} from "graphql";
 
 /**
  * The _GraphQlService class provides methods for constructing GraphQL schemas.
@@ -29,19 +29,19 @@ class _GraphQlService {
   });
 
   constructor() {
-    this._schemas['asks'] = new GraphQLSchema({
+    this._schemas["asks"] = new GraphQLSchema({
       query: new GraphQLObjectType({
-        name: 'Query',
+        name: "Query",
         fields: {
           ask: {
             type: new GraphQLList(
               new GraphQLObjectType({
-                name: 'Ask',
+                name: "Ask",
                 fields: {
                   id: {
                     type: GraphQLString,
                     resolve: (parents): string => {
-                      return '0x' + parents.id.toString('hex');
+                      return "0x" + parents.id.toString("hex");
                     },
                   },
                   kind: {
@@ -64,40 +64,40 @@ class _GraphQlService {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.token_set_schema_hash
-                        ? '0x' + parents.token_set_schema_hash.toString('hex')
-                        : '';
+                        ? "0x" + parents.token_set_schema_hash.toString("hex")
+                        : "";
                     },
                   },
                   contract: {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.contract
-                        ? '0x' + parents.contract.toString('hex')
-                        : '';
+                        ? "0x" + parents.contract.toString("hex")
+                        : "";
                     },
                   },
                   maker: {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.maker
-                        ? '0x' + parents.maker.toString('hex')
-                        : '';
+                        ? "0x" + parents.maker.toString("hex")
+                        : "";
                     },
                   },
                   taker: {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.taker
-                        ? '0x' + parents.taker.toString('hex')
-                        : '';
+                        ? "0x" + parents.taker.toString("hex")
+                        : "";
                     },
                   },
                   price_currency_contract: {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.price_currency_contract
-                        ? '0x' + parents.price_currency_contract.toString('hex')
-                        : '';
+                        ? "0x" + parents.price_currency_contract.toString("hex")
+                        : "";
                     },
                   },
                   price_currency_name: {
@@ -204,43 +204,43 @@ class _GraphQlService {
         },
       }),
     });
-    this._schemas['transfers'] = new GraphQLSchema({
+    this._schemas["transfers"] = new GraphQLSchema({
       query: new GraphQLObjectType({
-        name: 'Query',
+        name: "Query",
         fields: {
           transfer: {
             type: new GraphQLList(
               new GraphQLObjectType({
-                name: 'Transfer',
+                name: "Transfer",
                 fields: {
                   id: {
                     type: GraphQLString,
                     resolve: (parents): string => {
-                      return '0x' + parents.id.toString('hex');
+                      return "0x" + parents.id.toString("hex");
                     },
                   },
                   token_contract: {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.token_contract
-                        ? '0x' + parents.token_contract.toString('hex')
-                        : '';
+                        ? "0x" + parents.token_contract.toString("hex")
+                        : "";
                     },
                   },
                   from: {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.from
-                        ? '0x' + parents.from.toString('hex')
-                        : '';
+                        ? "0x" + parents.from.toString("hex")
+                        : "";
                     },
                   },
                   to: {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.to
-                        ? '0x' + parents.to.toString('hex')
-                        : '';
+                        ? "0x" + parents.to.toString("hex")
+                        : "";
                     },
                   },
                   amount: {
@@ -270,19 +270,19 @@ class _GraphQlService {
         },
       }),
     });
-    this._schemas['bids'] = new GraphQLSchema({
+    this._schemas["bids"] = new GraphQLSchema({
       query: new GraphQLObjectType({
-        name: 'Query',
+        name: "Query",
         fields: {
           ask: {
             type: new GraphQLList(
               new GraphQLObjectType({
-                name: 'Bid',
+                name: "Bid",
                 fields: {
                   id: {
                     type: GraphQLString,
                     resolve: (parents): string => {
-                      return '0x' + parents.id.toString('hex');
+                      return "0x" + parents.id.toString("hex");
                     },
                   },
                   kind: {
@@ -305,40 +305,40 @@ class _GraphQlService {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.token_set_schema_hash
-                        ? '0x' + parents.token_set_schema_hash.toString('hex')
-                        : '';
+                        ? "0x" + parents.token_set_schema_hash.toString("hex")
+                        : "";
                     },
                   },
                   contract: {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.contract
-                        ? '0x' + parents.contract.toString('hex')
-                        : '';
+                        ? "0x" + parents.contract.toString("hex")
+                        : "";
                     },
                   },
                   maker: {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.maker
-                        ? '0x' + parents.maker.toString('hex')
-                        : '';
+                        ? "0x" + parents.maker.toString("hex")
+                        : "";
                     },
                   },
                   taker: {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.taker
-                        ? '0x' + parents.taker.toString('hex')
-                        : '';
+                        ? "0x" + parents.taker.toString("hex")
+                        : "";
                     },
                   },
                   price_currency_contract: {
                     type: GraphQLString,
                     resolve: (parents): string => {
                       return parents.price_currency_contract
-                        ? '0x' + parents.price_currency_contract.toString('hex')
-                        : '';
+                        ? "0x" + parents.price_currency_contract.toString("hex")
+                        : "";
                     },
                   },
                   price_currency_name: {
@@ -445,14 +445,14 @@ class _GraphQlService {
         },
       }),
     });
-    this._schemas['sales'] = new GraphQLSchema({
+    this._schemas["sales"] = new GraphQLSchema({
       query: new GraphQLObjectType({
-        name: 'Query',
+        name: "Query",
         fields: {
           sale: {
             type: new GraphQLList(
               new GraphQLObjectType({
-                name: 'Sale',
+                name: "Sale",
                 fields: {
                   block: {
                     type: GraphQLInt,
@@ -469,7 +469,7 @@ class _GraphQlService {
                   sale_id: {
                     type: GraphQLString,
                     resolve: (parents): string => {
-                      return '0x' + parents.sale_id.toString('hex');
+                      return "0x" + parents.sale_id.toString("hex");
                     },
                   },
                   updated_at: {
@@ -499,13 +499,13 @@ class _GraphQlService {
                   contract_id: {
                     type: GraphQLString,
                     resolve: (parents): string => {
-                      return '0x' + parents.contract_id.toString('hex');
+                      return "0x" + parents.contract_id.toString("hex");
                     },
                   },
                   tx_hash: {
                     type: GraphQLString,
                     resolve: (parents): string => {
-                      return '0x' + parents.tx_hash.toString('hex');
+                      return "0x" + parents.tx_hash.toString("hex");
                     },
                   },
                 },

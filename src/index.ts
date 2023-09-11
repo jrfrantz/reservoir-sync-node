@@ -1,4 +1,4 @@
-import 'dotenv/config';
-import SyncNode from './SyncNode';
+import "dotenv/config";
+import SyncNode from "./SyncNode";
 
 SyncNode.launch();
