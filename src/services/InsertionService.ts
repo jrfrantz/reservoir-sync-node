@@ -289,6 +289,7 @@ class _InsertionService {
         sale_id: toBuffer(sale?.saleId),
         token_id: sale.token?.tokenId,
         contract_id: addressToBuffer(sale?.token?.contract),
+        collection_id: sale?.token?.collection?.id,
         order_id: addressToBuffer(sale.orderId),
         order_source: sale.orderSource,
         order_side: sale.orderSide,
