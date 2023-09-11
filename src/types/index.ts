@@ -7,6 +7,7 @@ import { Application } from "express";
 
 export enum URLs {
   "goerli" = "wss://ws.dev.reservoir.tools",
+  "sepolia" = "wss://ws-sepolia.reservoir.tools",
   "mainnet" = "wss://ws.reservoir.tools",
   "polygon" = "wss://ws-polygon.reservoir.tools",
   "arbitrum" = "wss://ws-arbitrum.reservoir.tools",
