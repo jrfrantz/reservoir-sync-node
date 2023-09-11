@@ -59,6 +59,7 @@ model sales {
   sale_id            Bytes?    @db.ByteA
   token_id           String?   @db.Text
   contract_id        Bytes?    @db.ByteA
+  collection_id      String?   @db.Text
   order_id           Bytes?    @db.ByteA
   order_source       String?   @db.Text
   order_side         String?   @db.Text
@@ -149,4 +150,14 @@ model transfers {
 
   created_at DateTime? @db.Timestamp
   updated_at DateTime? @db.Timestamp
+}
+
+
+model firstmate_collection_id {
+  firstmate_id      String    @db.Text
+  collection_id     String    @db.Text
+  chain_id          Int       @db.Integer
+  updated_at        DateTime? @db.Timestamptz(6)
+
+  @@unique([firstmate_id,collection_id,chain_id])
 }
