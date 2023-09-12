@@ -49,6 +49,7 @@ CREATE TABLE "sales" (
     "sale_id" BYTEA,
     "token_id" TEXT,
     "contract_id" BYTEA,
+    "collection_id" TEXT,
     "order_id" BYTEA,
     "order_source" TEXT,
     "order_side" TEXT,
@@ -140,3 +141,14 @@ CREATE TABLE "transfers" (
 
     CONSTRAINT "transfers_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "firstmate_collection_id" (
+    "firstmate_id" TEXT NOT NULL,
+    "collection_id" TEXT NOT NULL,
+    "chain_id" INTEGER NOT NULL,
+    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "firstmate_collection_id_firstmate_id_collection_id_chain_id_key" ON "firstmate_collection_id"("firstmate_id", "collection_id", "chain_id");

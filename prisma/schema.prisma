@@ -86,6 +86,10 @@ model sales {
   price_amount_decimal String? @db.Text
   price_amount_usd     String? @db.Text
   price_amount_native  String? @db.Text
+
+  @@index([created_at])
+  @@index([fill_source])
+  @@index([collection_id])
 }
 
 model bids {
@@ -157,7 +161,8 @@ model firstmate_collection_id {
   firstmate_id      String    @db.Text
   collection_id     String    @db.Text
   chain_id          Int       @db.Integer
-  updated_at        DateTime? @db.Timestamptz(6)
+  updated_at        DateTime? @default(now())
 
   @@unique([firstmate_id,collection_id,chain_id])
+  @@index([collection_id])
 }
