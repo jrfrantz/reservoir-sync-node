@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { useEffect, useMemo, useState } from 'react';
 
 
-const REACT_APP_SERVER_DOMAIN = 'https://reservoir-sync-node-production-bc1e.up.railway.app/'
+const REACT_APP_SERVER_DOMAIN = 'https://reservoir-sync-node-production-bc1e.up.railway.app'
 function App() {
   const [dataType, setDataType] = useState<
     'sales' | 'bids' | 'asks' | 'transfers'
