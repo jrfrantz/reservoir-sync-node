@@ -122,7 +122,7 @@ class SyncNode {
       stdio: ["inherit", "inherit", "inherit", "ipc"],
     });
     this._serverProcess.on("message", (message: ProcessCommand) => {
-      LoggerService.info(`Server Message: ${message}`);
+      LoggerService.info(`Server Message: ${JSON.stringify(message, null, 2)}`);
       if (message.command) {
         switch (message.command) {
           case "contract_add": {
